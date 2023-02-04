@@ -1730,7 +1730,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 247
   m_RenderingPath: 1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -1838,7 +1838,7 @@ MonoBehaviour:
   DebugKeyboardRecalibrate: 0
   DebugCalibMode: 0
   DebugCalibMovedThreshold: 0.05
-  RecalibrateKey: 114
+  HeightCalibrateKey: 32
   SaveCalibrationHeight: 1
   PlayerControllerYOffset: 0
   AdjustedCameraHeight: 0
@@ -7399,8 +7399,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60ac0a61a75ecf64e8c54dcb82a08821, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LeftHandSaveKey: 108
-  RightHandSaveKey: 114
+  LeftSaveKey: 26
+  RightSaveKey: 32
   LeftHand: {fileID: 0}
   RightHand: {fileID: 0}
   LeftPhysics: {fileID: 4265685514685952807}
