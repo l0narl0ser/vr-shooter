@@ -1,4 +1,5 @@
-﻿using DefaultNamespace;
+﻿using Controllers;
+using DefaultNamespace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,10 @@ using Random = UnityEngine.Random;
 
 namespace Service
 {
-    public class SpawnService
+    public class SpawnService : IDisposable
     {
         private const int MaxCountSpawnEnemy= 5;
+        private CompositeDisposable compositeDisposable = new CompositeDisposable();
         private readonly DiContainer _diContainer;
         private readonly SpawnPositionService _spawnPositionService;
         private List<EnemyController> _enemys = new List<EnemyController>();
@@ -29,7 +31,7 @@ namespace Service
         private void CreateStartSpawn()
         {
             GenerateEnemy();
-            Observable.Interval(TimeSpan.FromSeconds(1)).Subscribe(_ => CheckAllEnemyKilled());
+            Observable.Interval(TimeSpan.FromSeconds(1)).Subscribe(_ => CheckAllEnemyKilled()).AddTo(compositeDisposable);
         }
 
 
@@ -62,6 +64,13 @@ namespace Service
                 Transform spawnPoint = _spawnPositionService.SpawnPoints[randomPoint];
                 enemyController.transform.position = spawnPoint.position;
             }
+        }
+
+
+        public void Dispose()
+        {
+            compositeDisposable?.Dispose();
+            compositeDisposable = null;
         }
     }
 }
