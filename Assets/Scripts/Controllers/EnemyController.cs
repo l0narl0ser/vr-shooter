@@ -25,12 +25,15 @@ namespace Controllers
         private int _deadDistance = 2;
         private float _timerAttack = 0;
         private float currentHeath;
+        private DiContainer _diContainer;
+        private bool alive = true;
 
 
         [Inject]
-        public void Construct(PlayerData player)
+        public void Construct(PlayerData player, DiContainer diContainer)
         {
             _player = player;
+            _diContainer = diContainer;
         }
 
 
@@ -44,6 +47,10 @@ namespace Controllers
 
         private void Update()
         {
+            if (!alive)
+            {
+                return;
+            }
             agent.destination = _player.gameObject.transform.position;
             healthImage.transform.LookAt(_cameraTransform);
             backImage.transform.LookAt(_cameraTransform);
@@ -62,10 +69,16 @@ namespace Controllers
 
         public override void TakeDamage(float damage)
         {
+            if (!alive)
+            {
+                return;
+            }
             currentHeath -= damage;
             healthImage.fillAmount = currentHeath / health;
             if (currentHeath <= 0)
             {
+                alive = false;
+                agent.destination = transform.position;
                 animatorController.SetBool(Dead, true);
                 Observable.Timer(TimeSpan.FromSeconds(1.5))
                     .Subscribe(_ => DestroyEnemy())
@@ -74,8 +87,10 @@ namespace Controllers
         }
 
 
-        private void DestroyEnemy()
+        public void DestroyEnemy()
         {
+            HealController healController = _diContainer.Resolve<HealController>();
+            healController.transform.position = transform.position;
             Destroy(gameObject);
         }
     }

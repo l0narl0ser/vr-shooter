@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UniRx;
 using UnityEngine;
+using UnityEngine.AI;
 using Zenject;
 using Random = UnityEngine.Random;
 
@@ -31,7 +32,7 @@ namespace Service
         private void CreateStartSpawn()
         {
             GenerateEnemy();
-            Observable.Interval(TimeSpan.FromSeconds(1)).Subscribe(_ => CheckAllEnemyKilled()).AddTo(compositeDisposable);
+            Observable.Interval(TimeSpan.FromSeconds(5)).Subscribe(_ => CheckAllEnemyKilled()).AddTo(compositeDisposable);
         }
 
 
@@ -54,15 +55,23 @@ namespace Service
 
         private void GenerateEnemy()
         {
-            List<int> usedSpawnedPoint = new List<int>();
             for (int i = 0; i < MaxCountSpawnEnemy; i++)
             {
                 EnemyController enemyController = _diContainer.Resolve<EnemyController>();
                 _enemys.Add(enemyController);
                 int randomPoint = Random.Range(0, _spawnPositionService.SpawnPoints.Count - 1);
-                usedSpawnedPoint.Add(randomPoint);
                 Transform spawnPoint = _spawnPositionService.SpawnPoints[randomPoint];
-                enemyController.transform.position = spawnPoint.position;
+                enemyController.transform.SetParent(spawnPoint);
+                NavMeshHit myNavHit;
+                if(NavMesh.SamplePosition(spawnPoint.position, out myNavHit, 0.1f , -1))
+                {
+                    enemyController.transform.position = myNavHit.position;
+                }
+                else
+                {
+                    enemyController.transform.position = spawnPoint.transform.position;
+                }
+
             }
         }
 

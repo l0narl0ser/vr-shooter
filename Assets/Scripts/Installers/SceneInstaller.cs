@@ -13,6 +13,7 @@ public class SceneInstaller : MonoInstaller
     [SerializeField] private SpawnPositionService spawnPositionService;
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Transform playerSpawnPosition;
+    [SerializeField] private HealController healController;
 
 
     public override void InstallBindings()
@@ -22,6 +23,9 @@ public class SceneInstaller : MonoInstaller
 
 
         Container.Bind<EnemyController>().FromComponentInNewPrefab(enemyController).AsTransient().Lazy();
+        Container.Bind<HealController>().FromComponentInNewPrefab(healController).AsTransient().Lazy();
+
+        
         Container.Bind<SpawnPositionService>().FromInstance(spawnPositionService).AsSingle().NonLazy();
 
         Container.BindInterfacesAndSelfTo<SpawnService>().AsSingle().NonLazy();
